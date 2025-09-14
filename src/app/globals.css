@@ -24,3 +24,9 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* Dynamic placeholder color */
+input::placeholder {
+  color: inherit;
+  opacity: 0.6;
+}

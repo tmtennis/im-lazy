@@ -1,18 +1,24 @@
+# im-lazy
+
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+
+## Features
+
+- ⚡ **Turbopack**: Ultra-fast bundler for development and builds
+- 🚀 **Next.js 15+**: Latest React framework with App Router
+- 📝 **TypeScript**: Fully typed development experience
+- 🎨 **Tailwind CSS**: Utility-first CSS framework
+- 🔧 **ESLint**: Code quality and consistency
 
 ## Getting Started
 
-First, run the development server:
+First, run the development server with Turbopack:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
+
+> **Note**: This project uses Turbopack by default for faster development builds!
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 

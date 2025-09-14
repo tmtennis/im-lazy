@@ -1,103 +1,765 @@
-import Image from "next/image";
+'use client';
+
+import { useState, useEffect } from 'react';
+
+const fontCategories = {
+  'Sans Serif': ['Roboto', 'Open Sans', 'Lato', 'Montserrat', 'Raleway', 'Poppins', 'Source Sans Pro', 'PT Sans', 'Ubuntu', 'Nunito', 'Arimo', 'Titillium Web', 'Noto Sans', 'Droid Sans', 'Fira Sans', 'Work Sans', 'Karla', 'Rubik', 'Inter', 'Hind', 'Cabin', 'Oxygen', 'Libre Franklin', 'Quicksand', 'Varela Round', 'IBM Plex Sans', 'Exo', 'Exo 2', 'Overpass', 'Red Hat Display', 'Red Hat Text', 'Heebo', 'Assistant', 'Secular One', 'Alef', 'Aclonica', 'Acme', 'Comfortaa', 'Dosis', 'ABeeZee', 'Abel', 'Advent Pro', 'Alata', 'Aldrich', 'Alexandria', 'Amaranth', 'Anaheim', 'Andika', 'Antic', 'Antonio', 'Anybody', 'Asap', 'Asap Condensed', 'Athiti', 'Atkinson Hyperlegible', 'Average Sans', 'B612', 'Balsamiq Sans', 'Barlow', 'Barlow Condensed', 'Barlow Semi Condensed', 'Basic', 'Be Vietnam Pro', 'Belleza', 'BenchNine', 'Blinker', 'Boogaloo', 'Bubblegum Sans', 'Bubbler One', 'Buda', 'Cabin Condensed', 'Cagliostro', 'Cairo', 'Cambay', 'Candal', 'Cantarell', 'Capriola', 'Carter One', 'Catamaran', 'Chakra Petch', 'Changa', 'Chivo', 'Commissioner', 'Convergence', 'Cuprum', 'DM Sans'],
+  'Serif': ['Playfair Display', 'Merriweather', 'Crimson Text', 'Libre Baskerville', 'PT Serif', 'Roboto Slab', 'Droid Serif', 'Source Serif Pro', 'Cormorant Garamond', 'EB Garamond', 'Crimson Pro', 'Spectral', 'Cardo', 'Lora', 'Vollkorn', 'Alegreya', 'Old Standard TT', 'Abril Fatface', 'Cinzel', 'Playfair Display SC', 'Cormorant', 'Yeseva One', 'Philosopher', 'Martel', 'Gentium Plus', 'Domine', 'Bitter', 'Zilla Slab', 'Slabo 27px', 'IBM Plex Serif', 'Abhaya Libre', 'Alice', 'Amiri', 'Andada Pro', 'Antic Slab', 'Arbutus Slab', 'Arvo', 'Baskervville', 'Bellefair', 'Bevan', 'BioRhyme', 'Bodoni Moda', 'Bree Serif', 'Brygada 1918', 'Buenard', 'Caladea', 'Cambo', 'Cantata One', 'Castoro', 'Caudex', 'Crete Round', 'Cormorant Infant', 'Cormorant SC', 'Cormorant Unicase', 'Cormorant Upright', 'Coustard', 'Cutive', 'DM Serif Display', 'DM Serif Text', 'Della Respira'],
+  'Monospace': ['Inconsolata', 'Source Code Pro', 'Space Mono', 'JetBrains Mono', 'Fira Code', 'Courier New', 'Monaco', 'Consolas', 'Menlo', 'Roboto Mono', 'PT Mono', 'Ubuntu Mono', 'Overpass Mono', 'IBM Plex Mono', 'Azeret Mono', 'B612 Mono', 'Cutive Mono', 'DM Mono', 'Courier Prime', 'Cousine'],
+  'Display': ['Oswald', 'Fjalla One', 'Anton', 'Bebas Neue', 'Impact', 'Righteous', 'Fredoka One', 'Alfa Slab One', 'Bungee', 'Russo One', 'Permanent Marker', 'Creepster', 'Archivo', 'Archivo Narrow', 'Archivo Black', 'Frank Ruhl Libre', 'Aileron', 'Akronim', 'Audiowide', 'Autour One', 'Berkshire Swash', 'Big Shoulders Display', 'Big Shoulders Text', 'Bigelow Rules', 'Bigshot One', 'Black Han Sans', 'Black Ops One', 'Blackletter', 'Bowlby One', 'Bowlby One SC', 'Bungee Hairline', 'Bungee Inline', 'Bungee Outline', 'Bungee Shade', 'Butcherman', 'Cabin Sketch', 'Caesar Dressing', 'Calistoga', 'Cantora One', 'Changa One', 'Chango', 'Chau Philomene One', 'Chela One', 'Chelsea Market', 'Cherry Cream Soda', 'Chewy', 'Chicle', 'Chonburi', 'Cinzel Decorative', 'Coda', 'Coda Caption', 'Codystar', 'Coiny', 'Combo', 'Comic Neue', 'Coming Soon', 'Concert One', 'Condiment', 'Content', 'Contrail One', 'Cookie', 'Copse', 'Corben', 'Courgette', 'Covered By Your Grace', 'Crafty Girls', 'Croissant One', 'Crushed', 'Cute Font'],
+  'Script': ['Dancing Script', 'Pacifico', 'Lobster', 'Great Vibes', 'Satisfy', 'Kaushan Script', 'Amatic SC', 'Caveat', 'Shadows Into Light', 'Indie Flower', 'Butterfly Kids', 'Calligraffitti', 'Carattere', 'Caveat Brush', 'Cedarville Cursive', 'Charm', 'Charmonman', 'Cherry Swash', 'Chilanka', 'Clicker Script', 'Damion', 'Delius', 'Delius Swash Caps', 'Delius Unicase', 'Devonshire', 'Bilbo', 'Bilbo Swash Caps']
+};
+
+const allFonts = Object.values(fontCategories).flat();
 
 export default function Home() {
-  return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+  const [inputText, setInputText] = useState("");
+  const [isFocused, setIsFocused] = useState(false);
+  const [currentFont, setCurrentFont] = useState('Inter');
+  const [selectedCategory, setSelectedCategory] = useState<string>('All Fonts');
+  const [selectedPaletteType, setSelectedPaletteType] = useState<string>('Monochromatic');
+  const [savedFonts, setSavedFonts] = useState<string[]>([]);
+  const [savedPalettes, setSavedPalettes] = useState<Array<{name: string, palette: typeof currentPalette}>>([]);
+  const [isAnimating, setIsAnimating] = useState(false);
+  const [showAllFonts, setShowAllFonts] = useState(false);
+  const [showAllPalettes, setShowAllPalettes] = useState(false);
+  const [currentPalette, setCurrentPalette] = useState({
+    primary: '#374151',    // gray-700
+    secondary: '#1f2937',  // gray-800
+    background: '#111827', // gray-900
+    text: '#ffffff',       // white
+    accent: '#6b7280'      // gray-500
+  });
+  const displayText = inputText || "i'm lazy";
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+  const loadGoogleFont = (fontName: string) => {
+    const link = document.createElement('link');
+    link.href = `https://fonts.googleapis.com/css2?family=${fontName.replace(' ', '+')}&display=swap`;
+    link.rel = 'stylesheet';
+    document.head.appendChild(link);
+  };
+
+  const getFilteredFonts = () => {
+    if (selectedCategory === 'All Fonts') return allFonts;
+    return fontCategories[selectedCategory as keyof typeof fontCategories] || [];
+  };
+
+  const animateAndChangeFont = (newFont: string) => {
+    setIsAnimating(true);
+    setTimeout(() => {
+      setCurrentFont(newFont);
+      loadGoogleFont(newFont);
+      setTimeout(() => setIsAnimating(false), 50);
+    }, 150);
+  };
+
+  const randomizeFont = () => {
+    const filteredFonts = getFilteredFonts();
+    if (filteredFonts.length === 0) return;
+    const randomFont = filteredFonts[Math.floor(Math.random() * filteredFonts.length)];
+    animateAndChangeFont(randomFont);
+  };
+
+  const toggleSaveFont = () => {
+    if (savedFonts.includes(currentFont)) {
+      setSavedFonts(prev => prev.filter(font => font !== currentFont));
+    } else {
+      setSavedFonts(prev => [...prev, currentFont]);
+    }
+  };
+
+  const selectSavedFont = (font: string) => {
+    animateAndChangeFont(font);
+  };
+
+  const hslToHex = (h: number, s: number, l: number) => {
+    const hDecimal = h / 360;
+    const sDecimal = s / 100;
+    const lDecimal = l / 100;
+    
+    const hue2rgb = (p: number, q: number, t: number) => {
+      if (t < 0) t += 1;
+      if (t > 1) t -= 1;
+      if (t < 1/6) return p + (q - p) * 6 * t;
+      if (t < 1/2) return q;
+      if (t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+      return p;
+    };
+    
+    let r, g, b;
+    if (sDecimal === 0) {
+      r = g = b = lDecimal;
+    } else {
+      const q = lDecimal < 0.5 ? lDecimal * (1 + sDecimal) : lDecimal + sDecimal - lDecimal * sDecimal;
+      const p = 2 * lDecimal - q;
+      r = hue2rgb(p, q, hDecimal + 1/3);
+      g = hue2rgb(p, q, hDecimal);
+      b = hue2rgb(p, q, hDecimal - 1/3);
+    }
+    
+    const toHex = (c: number) => {
+      const hex = Math.round(c * 255).toString(16);
+      return hex.length === 1 ? '0' + hex : hex;
+    };
+    
+    return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
+  };
+
+
+
+  const generateRandomPalette = () => {
+    const baseHue = Math.floor(Math.random() * 360);
+    const baseSaturation = 60 + Math.floor(Math.random() * 30); // 60-90% saturation
+    
+    let newPalette;
+    
+    switch (selectedPaletteType) {
+      case 'Complementary':
+        // Base color and its complement (180° apart)
+        const complementHue = (baseHue + 180) % 360;
+        newPalette = {
+          primary: hslToHex(baseHue, baseSaturation, 50),
+          secondary: hslToHex(baseHue, baseSaturation - 10, 30),
+          background: hslToHex(baseHue, baseSaturation - 20, 10),
+          text: '#ffffff',
+          accent: hslToHex(complementHue, baseSaturation, 60)
+        };
+        break;
+        
+      case 'Analogous':
+        // Colors adjacent on color wheel (30° apart)
+        const analogous1 = (baseHue + 30) % 360;
+        const analogous2 = (baseHue - 30 + 360) % 360;
+        newPalette = {
+          primary: hslToHex(baseHue, baseSaturation, 50),
+          secondary: hslToHex(analogous1, baseSaturation - 10, 35),
+          background: hslToHex(baseHue, baseSaturation - 20, 10),
+          text: '#ffffff',
+          accent: hslToHex(analogous2, baseSaturation, 65)
+        };
+        break;
+        
+      case 'Triadic':
+        // Three colors evenly spaced (120° apart)
+        const triadic1 = (baseHue + 120) % 360;
+        const triadic2 = (baseHue + 240) % 360;
+        newPalette = {
+          primary: hslToHex(baseHue, baseSaturation, 50),
+          secondary: hslToHex(triadic1, baseSaturation - 10, 35),
+          background: hslToHex(baseHue, baseSaturation - 20, 10),
+          text: '#ffffff',
+          accent: hslToHex(triadic2, baseSaturation, 65)
+        };
+        break;
+        
+      default: // Monochromatic
+        newPalette = {
+          primary: hslToHex(baseHue, baseSaturation, 50),        // Medium lightness
+          secondary: hslToHex(baseHue, baseSaturation - 10, 30), // Darker
+          background: hslToHex(baseHue, baseSaturation - 20, 10), // Very dark
+          text: '#ffffff',                                       // White text for contrast
+          accent: hslToHex(baseHue, baseSaturation, 70)         // Lighter shade
+        };
+    }
+    
+    setCurrentPalette(newPalette);
+  };
+
+  const toggleSavePalette = () => {
+    const paletteExists = savedPalettes.some(p => 
+      JSON.stringify(p.palette) === JSON.stringify(currentPalette)
+    );
+    
+    if (paletteExists) {
+      setSavedPalettes(prev => prev.filter(p => 
+        JSON.stringify(p.palette) !== JSON.stringify(currentPalette)
+      ));
+    } else {
+      const paletteNumber = savedPalettes.length + 1;
+      const paletteName = `Palette ${paletteNumber}`;
+      setSavedPalettes(prev => [...prev, { name: paletteName, palette: currentPalette }]);
+    }
+  };
+
+  const selectSavedPalette = (palette: typeof currentPalette) => {
+    setCurrentPalette(palette);
+  };
+
+
+
+  useEffect(() => {
+    // Generate random font and palette on initial load
+    const randomFont = allFonts[Math.floor(Math.random() * allFonts.length)];
+    
+    // Generate random palette type
+    const paletteTypes = ['Monochromatic', 'Complementary', 'Analogous', 'Triadic'];
+    const randomPaletteType = paletteTypes[Math.floor(Math.random() * paletteTypes.length)];
+    
+    // Set random palette type first
+    setSelectedPaletteType(randomPaletteType);
+    
+    // Generate random palette with the selected type
+    const baseHue = Math.floor(Math.random() * 360);
+    const baseSaturation = 60 + Math.floor(Math.random() * 30); // 60-90% saturation
+    
+    let newPalette;
+    
+    switch (randomPaletteType) {
+      case 'Complementary':
+        const complementHue = (baseHue + 180) % 360;
+        newPalette = {
+          primary: hslToHex(baseHue, baseSaturation, 50),
+          secondary: hslToHex(baseHue, baseSaturation - 10, 30),
+          background: hslToHex(baseHue, baseSaturation - 20, 10),
+          text: '#ffffff',
+          accent: hslToHex(complementHue, baseSaturation, 60)
+        };
+        break;
+        
+      case 'Analogous':
+        const analogous1 = (baseHue + 30) % 360;
+        const analogous2 = (baseHue - 30 + 360) % 360;
+        newPalette = {
+          primary: hslToHex(baseHue, baseSaturation, 50),
+          secondary: hslToHex(analogous1, baseSaturation - 10, 35),
+          background: hslToHex(baseHue, baseSaturation - 20, 10),
+          text: '#ffffff',
+          accent: hslToHex(analogous2, baseSaturation, 65)
+        };
+        break;
+        
+      case 'Triadic':
+        const triadic1 = (baseHue + 120) % 360;
+        const triadic2 = (baseHue + 240) % 360;
+        newPalette = {
+          primary: hslToHex(baseHue, baseSaturation, 50),
+          secondary: hslToHex(triadic1, baseSaturation - 10, 35),
+          background: hslToHex(baseHue, baseSaturation - 20, 10),
+          text: '#ffffff',
+          accent: hslToHex(triadic2, baseSaturation, 65)
+        };
+        break;
+        
+      default: // Monochromatic
+        newPalette = {
+          primary: hslToHex(baseHue, baseSaturation, 50),
+          secondary: hslToHex(baseHue, baseSaturation - 10, 30),
+          background: hslToHex(baseHue, baseSaturation - 20, 10),
+          text: '#ffffff',
+          accent: hslToHex(baseHue, baseSaturation, 70)
+        };
+    }
+    
+    // Apply random font and palette
+    setCurrentFont(randomFont);
+    setCurrentPalette(newPalette);
+    loadGoogleFont(randomFont);
+  }, []);
+
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "I'm Lazy - Font & Color Palette Generator",
+    "description": "Generate random Google Fonts and color palettes instantly. Create monochromatic, complementary, analogous, and triadic color schemes.",
+    "url": "https://im-lazy.vercel.app",
+    "applicationCategory": "DesignApplication",
+    "operatingSystem": "Web Browser",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "creator": {
+      "@type": "Organization",
+      "name": "I'm Lazy Design Tools"
+    },
+    "featureList": [
+      "Random Google Font Generator",
+      "Color Palette Generator",
+      "Monochromatic Color Schemes",
+      "Complementary Color Schemes", 
+      "Analogous Color Schemes",
+      "Triadic Color Schemes",
+      "Font Collection Management",
+      "Palette Collection Management"
+    ]
+  };
+
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+      />
+      <div className="h-screen flex transition-colors duration-500" style={{ backgroundColor: currentPalette.background }}>
+      {/* Left Dashboard */}
+      <div className="w-80 border-r p-6 overflow-y-auto relative transition-all duration-500 flex-shrink-0" style={{ 
+        backgroundColor: currentPalette.secondary,
+        borderColor: `${currentPalette.accent}50`
+      }}>
+        {/* Subtle animated background pattern */}
+        <div className="absolute inset-0 opacity-5">
+          <div className="absolute top-10 left-10 w-32 h-32 rounded-full blur-3xl animate-pulse transition-colors duration-500" style={{ backgroundColor: currentPalette.primary }}></div>
+          <div className="absolute bottom-20 right-10 w-24 h-24 rounded-full blur-2xl animate-pulse transition-colors duration-500" style={{ backgroundColor: currentPalette.accent, animationDelay: '1s' }}></div>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
+        
+        <div className="relative z-10">
+          {/* Dashboard Header */}
+          <div className="text-center mb-8">
+            <h2 className="text-2xl font-bold transition-colors duration-500" style={{ 
+              color: currentPalette.text
+            }}>
+              Dashboard
+            </h2>
+          </div>
+          
+
+          
+          {/* Saved Fonts Section */}
+          <div className="space-y-4">
+            <div className="flex items-center gap-2">
+              <h3 className="text-lg font-semibold transition-colors duration-500" style={{ color: currentPalette.text }}>Font Collection</h3>
+              <div className="flex-1 h-px transition-all duration-500" style={{ 
+                backgroundColor: `${currentPalette.accent}60`
+              }}></div>
+            </div>
+            
+            {savedFonts.length === 0 ? (
+              <div className="text-center py-8">
+                <div className="w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center transition-colors duration-500" style={{ backgroundColor: `${currentPalette.secondary}80` }}>
+                  <div 
+                    className="w-8 h-8"
+                    style={{ 
+                      backgroundColor: currentPalette.primary,
+                      mask: `url(/book.svg) no-repeat center`,
+                      maskSize: 'contain',
+                      WebkitMask: `url(/book.svg) no-repeat center`,
+                      WebkitMaskSize: 'contain',
+                      opacity: 0.6
+                    }}
+                  />
+                </div>
+                <p className="text-sm mb-2 transition-colors duration-500" style={{ color: currentPalette.accent }}>No fonts in your collection</p>
+                <p className="text-xs transition-colors duration-500" style={{ color: `${currentPalette.accent}80` }}>Click the bookmark to save fonts</p>
+              </div>
+            ) : (
+              <div className="space-y-2">
+                {(showAllFonts ? savedFonts : savedFonts.slice(0, 2)).map((font, index) => (
+                  <div key={font} className="group relative">
+                    <div className="backdrop-blur-sm border rounded-lg overflow-hidden transition-all duration-300" style={{ 
+                      backgroundColor: `${currentPalette.background}E6`,
+                      borderColor: `${currentPalette.accent}4D`
+                    }} onMouseEnter={(e) => e.currentTarget.style.borderColor = `${currentPalette.accent}80`}
+                    onMouseLeave={(e) => e.currentTarget.style.borderColor = `${currentPalette.accent}4D`}>
+                      <div className="flex items-center">
+                        {/* Main content area */}
+                        <button
+                          onClick={() => selectSavedFont(font)}
+                          className="flex-1 text-left p-3 hover:bg-white/5 transition-colors"
+                        >
+                          <div className="font-medium text-sm mb-1 truncate transition-colors duration-500" style={{ fontFamily: font, color: currentPalette.text }}>
+                            {displayText}
+                          </div>
+                          <div className="flex items-center gap-1">
+                            <span className="text-xs transition-colors duration-500" style={{ color: currentPalette.accent }}>Link:</span>
+                            <a
+                              href={`https://fonts.google.com/specimen/${font.replace(/\s+/g, '+')}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              onClick={(e) => e.stopPropagation()}
+                              className="text-xs font-mono hover:underline transition-colors duration-200"
+                              style={{ color: currentPalette.primary }}
+                              onMouseEnter={(e) => e.currentTarget.style.color = currentPalette.accent}
+                              onMouseLeave={(e) => e.currentTarget.style.color = currentPalette.primary}
+                            >
+                              {font}
+                            </a>
+                          </div>
+                        </button>
+                        
+                        {/* Delete button */}
+                        <div className="p-2 border-l transition-colors duration-500" style={{ borderColor: `${currentPalette.accent}50` }}>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setSavedFonts(prev => prev.filter(f => f !== font));
+                            }}
+                            className="p-1 hover:bg-red-500/20 rounded transition-all duration-200 group/delete"
+                          >
+                            <div 
+                              className="w-4 h-4 opacity-60 hover:opacity-100 group-hover/delete:scale-110 transition-all duration-200"
+                              style={{ 
+                                backgroundColor: '#ef4444',
+                                mask: `url(/delete.svg) no-repeat center`,
+                                maskSize: 'contain',
+                                WebkitMask: `url(/delete.svg) no-repeat center`,
+                                WebkitMaskSize: 'contain'
+                              }}
+                            />
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+                
+                {savedFonts.length > 2 && (
+                  <button
+                    onClick={() => setShowAllFonts(!showAllFonts)}
+                    className="w-full text-center py-2 text-sm transition-colors duration-200"
+                    style={{ color: currentPalette.accent }}
+                    onMouseEnter={(e) => e.currentTarget.style.color = currentPalette.primary}
+                    onMouseLeave={(e) => e.currentTarget.style.color = currentPalette.accent}
+                  >
+                    {showAllFonts ? 'View Less' : `View More (${savedFonts.length - 2} more)`}
+                  </button>
+                )}
+              </div>
+            )}
+          </div>
+
+          {/* Saved Palettes Section */}
+          <div className="space-y-4 mt-8">
+            <div className="flex items-center gap-2">
+              <h3 className="text-lg font-semibold transition-colors duration-500" style={{ color: currentPalette.text }}>Palette Collection</h3>
+              <div className="flex-1 h-px transition-all duration-500" style={{ 
+                backgroundColor: `${currentPalette.accent}60`
+              }}></div>
+            </div>
+            
+            {savedPalettes.length === 0 ? (
+              <div className="text-center py-8">
+                <div className="w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center transition-colors duration-500" style={{ backgroundColor: `${currentPalette.secondary}80` }}>
+                  <div 
+                    className="w-8 h-8"
+                    style={{ 
+                      backgroundColor: currentPalette.primary,
+                      mask: `url(/book.svg) no-repeat center`,
+                      maskSize: 'contain',
+                      WebkitMask: `url(/book.svg) no-repeat center`,
+                      WebkitMaskSize: 'contain',
+                      opacity: 0.6
+                    }}
+                  />
+                </div>
+                <p className="text-sm mb-2 transition-colors duration-500" style={{ color: currentPalette.accent }}>No palettes in your collection</p>
+                <p className="text-xs transition-colors duration-500" style={{ color: `${currentPalette.accent}80` }}>Click the save-paint icon to save palettes</p>
+              </div>
+            ) : (
+              <div className="space-y-2">
+                {(showAllPalettes ? savedPalettes : savedPalettes.slice(0, 2)).map((savedPalette, index) => (
+                  <div key={index} className="group relative">
+                    <div className="backdrop-blur-sm border rounded-lg overflow-hidden transition-all duration-300" style={{ 
+                      backgroundColor: `${currentPalette.background}E6`,
+                      borderColor: `${currentPalette.accent}4D`
+                    }} onMouseEnter={(e) => e.currentTarget.style.borderColor = `${currentPalette.accent}80`}
+                    onMouseLeave={(e) => e.currentTarget.style.borderColor = `${currentPalette.accent}4D`}>
+                      <div className="flex items-center">
+                        {/* Main content area */}
+                        <button
+                          onClick={() => selectSavedPalette(savedPalette.palette)}
+                          className="flex-1 text-left p-3 hover:bg-white/5 transition-colors"
+                        >
+                          <div className="flex items-start justify-between">
+                            <div>
+                              <div className="font-medium text-sm mb-1 transition-colors duration-500" style={{ color: currentPalette.text }}>
+                                {savedPalette.name}
+                              </div>
+                              <div className="flex gap-1">
+                                <div className="w-3 h-3 rounded-full border border-white/20" style={{ backgroundColor: savedPalette.palette.primary }}></div>
+                                <div className="w-3 h-3 rounded-full border border-white/20" style={{ backgroundColor: savedPalette.palette.secondary }}></div>
+                                <div className="w-3 h-3 rounded-full border border-white/20" style={{ backgroundColor: savedPalette.palette.background }}></div>
+                                <div className="w-3 h-3 rounded-full border border-white/20" style={{ backgroundColor: savedPalette.palette.accent }}></div>
+                              </div>
+                            </div>
+                            <div className="text-xs font-mono transition-colors duration-500 leading-tight text-right" style={{ color: `${currentPalette.accent}CC` }}>
+                              <div>{savedPalette.palette.primary} {savedPalette.palette.secondary}</div>
+                              <div>{savedPalette.palette.background} {savedPalette.palette.accent}</div>
+                            </div>
+                          </div>
+                        </button>
+                        
+                        {/* Delete button */}
+                        <div className="p-2 border-l transition-colors duration-500" style={{ borderColor: `${currentPalette.accent}50` }}>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setSavedPalettes(prev => prev.filter((_, i) => i !== index));
+                            }}
+                            className="p-1 hover:bg-red-500/20 rounded transition-all duration-200 group/delete"
+                          >
+                            <div 
+                              className="w-4 h-4 opacity-60 hover:opacity-100 group-hover/delete:scale-110 transition-all duration-200"
+                              style={{ 
+                                backgroundColor: '#ef4444',
+                                mask: `url(/delete.svg) no-repeat center`,
+                                maskSize: 'contain',
+                                WebkitMask: `url(/delete.svg) no-repeat center`,
+                                WebkitMaskSize: 'contain'
+                              }}
+                            />
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+                
+                {savedPalettes.length > 2 && (
+                  <button
+                    onClick={() => setShowAllPalettes(!showAllPalettes)}
+                    className="w-full text-center py-2 text-sm transition-colors duration-200"
+                    style={{ color: currentPalette.accent }}
+                    onMouseEnter={(e) => e.currentTarget.style.color = currentPalette.primary}
+                    onMouseLeave={(e) => e.currentTarget.style.color = currentPalette.accent}
+                  >
+                    {showAllPalettes ? 'View Less' : `View More (${savedPalettes.length - 2} more)`}
+                  </button>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+      
+      {/* Main Content */}
+      <div className="flex-1 flex flex-col items-center justify-center relative p-4 transition-colors duration-500 h-screen overflow-hidden" style={{ backgroundColor: currentPalette.background }}>
+      <div className="flex flex-col items-center">
+        <div className="flex items-center justify-center min-h-[200px]">
+          <h1 
+            className={`text-9xl font-bold text-center break-words max-w-full transition-all duration-300 leading-none ${
+              isAnimating ? 'opacity-60' : 'opacity-100'
+            }`}
+            style={{ 
+              fontFamily: currentFont,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              minHeight: '1em',
+              color: currentPalette.text
+            }}
+          >
+            {displayText}
+          </h1>
+        </div>
+        <a 
+          href={`https://fonts.google.com/specimen/${currentFont.replace(/\s+/g, '+')}`}
           target="_blank"
           rel="noopener noreferrer"
+          className="text-lg font-mono hover:scale-105 transition-all duration-200 cursor-pointer"
+          style={{ 
+            color: currentPalette.accent,
+            marginTop: '-10px'
+          }}
+          onMouseEnter={(e) => e.currentTarget.style.color = currentPalette.text}
+          onMouseLeave={(e) => e.currentTarget.style.color = currentPalette.accent}
         >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
+          Link: {currentFont}
         </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+        
+        {/* Color palette display */}
+        <div className="mt-1 text-xs font-mono transition-colors duration-500" style={{ color: `${currentPalette.accent}CC` }}>
+          <div className="flex flex-wrap gap-2 justify-center">
+            <span>{currentPalette.primary}</span>
+            <span>•</span>
+            <span>{currentPalette.secondary}</span>
+            <span>•</span>
+            <span>{currentPalette.background}</span>
+            <span>•</span>
+            <span>{currentPalette.accent}</span>
+          </div>
+        </div>
+      </div>
+      <div className="absolute bottom-20 w-full flex flex-col items-center gap-4">
+        <div className="flex items-center gap-6">
+          <div className="relative">
+            <input
+              type="text"
+              value={inputText}
+              onChange={(e) => setInputText(e.target.value)}
+              onFocus={() => setIsFocused(true)}
+              onBlur={() => setIsFocused(false)}
+              placeholder={isFocused || inputText ? "" : "Type something..."}
+              className="px-6 py-4 text-xl bg-transparent focus:outline-none w-96 text-center transition-colors duration-500 placeholder-opacity-60"
+              style={{ 
+                color: currentPalette.text
+              }}
+            />
+            <div className="absolute bottom-0 left-0 right-0 h-0.5 transition-colors duration-500" style={{ backgroundColor: currentPalette.accent }}></div>
+          </div>
+           <button
+            onClick={randomizeFont}
+            className="p-2 relative group"
+            aria-label="Randomize font"
+          >
+            <div className="absolute top-16 left-1/2 transform -translate-x-1/2 text-xs font-bold opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap" style={{ 
+              color: currentPalette.text
+            }}>
+              Random Google Font
+            </div>
+            <div 
+              className="w-10 h-10 hover:scale-110 transition-all duration-500"
+              style={{ 
+                backgroundColor: currentPalette.primary,
+                mask: `url(/pencil.svg) no-repeat center`,
+                maskSize: 'contain',
+                WebkitMask: `url(/pencil.svg) no-repeat center`,
+                WebkitMaskSize: 'contain',
+                opacity: 1
+              }}
+            />
+          </button>
+
+          <button
+            onClick={generateRandomPalette}
+            className="p-2 relative group"
+            aria-label="Paint"
+          >
+            <div className="absolute top-16 left-1/2 transform -translate-x-1/2 text-xs font-bold opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap" style={{ 
+              color: currentPalette.text
+            }}>
+              Random Color Palette
+            </div>
+            <div 
+              className="w-10 h-10 hover:scale-110 transition-all duration-500"
+              style={{ 
+                backgroundColor: currentPalette.primary,
+                mask: `url(/paint.svg) no-repeat center`,
+                maskSize: 'contain',
+                WebkitMask: `url(/paint.svg) no-repeat center`,
+                WebkitMaskSize: 'contain',
+                opacity: 1
+              }}
+            />
+          </button>
+
+          <button
+            onClick={toggleSaveFont}
+            className="p-2 relative group"
+            aria-label="Save font"
+          >
+            <div className="absolute top-16 left-1/2 transform -translate-x-1/2 text-xs font-bold opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap" style={{ 
+              color: currentPalette.text
+            }}>
+              Save Font
+            </div>
+            <div 
+              className="w-10 h-10 hover:scale-110 transition-all duration-500"
+              style={{ 
+                backgroundColor: currentPalette.primary,
+                mask: `url(/bookmark.svg) no-repeat center`,
+                maskSize: 'contain',
+                WebkitMask: `url(/bookmark.svg) no-repeat center`,
+                WebkitMaskSize: 'contain',
+                opacity: 1
+              }}
+            />
+          </button>
+
+          <button
+            onClick={toggleSavePalette}
+            className="p-2 relative group"
+            aria-label="Save palette"
+          >
+            <div className="absolute top-16 left-1/2 transform -translate-x-1/2 text-xs font-bold opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap" style={{ 
+              color: currentPalette.text
+            }}>
+              Save Palette
+            </div>
+            <div 
+              className="w-10 h-10 hover:scale-110 transition-all duration-500"
+              style={{ 
+                backgroundColor: currentPalette.primary,
+                mask: `url(/save-paint.svg) no-repeat center`,
+                maskSize: 'contain',
+                WebkitMask: `url(/save-paint.svg) no-repeat center`,
+                WebkitMaskSize: 'contain',
+                opacity: 1
+              }}
+            />
+          </button>
+        </div>
+        
+        <div className="flex items-center gap-4">
+          <button
+            onClick={() => setSelectedCategory('All Fonts')}
+            className="px-3 py-2 text-sm transition-all duration-200 relative"
+            style={{ 
+              color: selectedCategory === 'All Fonts' ? currentPalette.text : currentPalette.accent 
+            }}
+            onMouseEnter={(e) => {
+              if (selectedCategory !== 'All Fonts') {
+                e.currentTarget.style.color = currentPalette.text;
+              }
+            }}
+            onMouseLeave={(e) => {
+              if (selectedCategory !== 'All Fonts') {
+                e.currentTarget.style.color = currentPalette.accent;
+              }
+            }}
+          >
+            All Fonts
+            {selectedCategory === 'All Fonts' && (
+              <div className="absolute bottom-0 left-0 right-0 h-0.5 transition-colors duration-500" style={{ backgroundColor: currentPalette.text }}></div>
+            )}
+          </button>
+          {Object.keys(fontCategories).map(category => (
+            <button
+              key={category}
+              onClick={() => setSelectedCategory(category)}
+              className="px-3 py-2 text-sm transition-all duration-200 relative"
+              style={{ 
+                color: selectedCategory === category ? currentPalette.text : currentPalette.accent 
+              }}
+              onMouseEnter={(e) => {
+                if (selectedCategory !== category) {
+                  e.currentTarget.style.color = currentPalette.text;
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (selectedCategory !== category) {
+                  e.currentTarget.style.color = currentPalette.accent;
+                }
+              }}
+            >
+              {category}
+              {selectedCategory === category && (
+                <div className="absolute bottom-0 left-0 right-0 h-0.5 transition-colors duration-500" style={{ backgroundColor: currentPalette.text }}></div>
+              )}
+            </button>
+          ))}
+        </div>
+        
+        <div className="flex items-center gap-4 mt-4">
+          {['Monochromatic', 'Complementary', 'Analogous', 'Triadic'].map(paletteType => (
+            <button
+              key={paletteType}
+              onClick={() => setSelectedPaletteType(paletteType)}
+              className="px-3 py-2 text-sm transition-all duration-200 relative"
+              style={{ 
+                color: selectedPaletteType === paletteType ? currentPalette.text : currentPalette.accent 
+              }}
+              onMouseEnter={(e) => {
+                if (selectedPaletteType !== paletteType) {
+                  e.currentTarget.style.color = currentPalette.text;
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (selectedPaletteType !== paletteType) {
+                  e.currentTarget.style.color = currentPalette.accent;
+                }
+              }}
+            >
+              {paletteType}
+              {selectedPaletteType === paletteType && (
+                <div className="absolute bottom-0 left-0 right-0 h-0.5 transition-colors duration-500" style={{ backgroundColor: currentPalette.text }}></div>
+              )}
+            </button>
+          ))}
+        </div>
+      </div>
+      </div>
     </div>
+    </>
   );
 }
