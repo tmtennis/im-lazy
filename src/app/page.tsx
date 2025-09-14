@@ -23,6 +23,7 @@ export default function Home() {
   const [isAnimating, setIsAnimating] = useState(false);
   const [showAllFonts, setShowAllFonts] = useState(false);
   const [showAllPalettes, setShowAllPalettes] = useState(false);
+  const [isMobileDashboardOpen, setIsMobileDashboardOpen] = useState(false);
   const [currentPalette, setCurrentPalette] = useState({
     primary: '#374151',    // gray-700
     secondary: '#1f2937',  // gray-800
@@ -291,9 +292,45 @@ export default function Home() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
       />
-      <div className="h-screen flex transition-colors duration-500" style={{ backgroundColor: currentPalette.background }}>
-      {/* Left Dashboard */}
-      <div className="w-80 border-r p-6 overflow-y-auto relative transition-all duration-500 flex-shrink-0" style={{ 
+      <div className="h-screen flex flex-col lg:flex-row transition-colors duration-500 overflow-hidden" style={{ backgroundColor: currentPalette.background }}>
+      
+      {/* Mobile Dashboard Dropdown Button */}
+      <div className="lg:hidden w-full p-4 border-b transition-all duration-500" style={{ 
+        backgroundColor: currentPalette.secondary,
+        borderColor: `${currentPalette.accent}50`
+      }}>
+        <button
+          onClick={() => setIsMobileDashboardOpen(!isMobileDashboardOpen)}
+          className="w-full flex items-center justify-between p-3 rounded-lg transition-all duration-200 hover:scale-[1.02]"
+          style={{ 
+            backgroundColor: `${currentPalette.primary}20`,
+            color: currentPalette.text
+          }}
+        >
+          <span className="text-lg font-semibold">Collections</span>
+          <div 
+            className={`w-6 h-6 transition-transform duration-200 ${isMobileDashboardOpen ? 'rotate-180' : ''}`}
+            style={{ 
+              backgroundColor: currentPalette.text,
+              mask: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='currentColor'%3e%3cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3e%3c/path%3e%3c/svg%3e") no-repeat center`,
+              maskSize: 'contain',
+              WebkitMask: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='currentColor'%3e%3cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3e%3c/path%3e%3c/svg%3e") no-repeat center`,
+              WebkitMaskSize: 'contain'
+            }}
+          />
+        </button>
+      </div>
+
+      {/* Dashboard Content - Mobile: Dropdown, Desktop: Sidebar */}
+      <div className={`
+        ${isMobileDashboardOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'} 
+        lg:max-h-none lg:opacity-100 
+        overflow-hidden lg:overflow-y-auto 
+        transition-all duration-300 ease-in-out
+        w-full lg:w-80 lg:border-r p-0 lg:p-6 
+        relative flex-shrink-0
+        lg:block z-10
+      `} style={{ 
         backgroundColor: currentPalette.secondary,
         borderColor: `${currentPalette.accent}50`
       }}>
@@ -303,10 +340,10 @@ export default function Home() {
           <div className="absolute bottom-20 right-10 w-24 h-24 rounded-full blur-2xl animate-pulse transition-colors duration-500" style={{ backgroundColor: currentPalette.accent, animationDelay: '1s' }}></div>
         </div>
         
-        <div className="relative z-10">
-          {/* Dashboard Header */}
-          <div className="text-center mb-8">
-            <h2 className="text-2xl font-bold transition-colors duration-500" style={{ 
+        <div className="relative z-10 p-4 lg:p-0">
+          {/* Dashboard Header - Hidden on mobile since we have the dropdown button */}
+          <div className="hidden lg:block text-center mb-6 lg:mb-8">
+            <h2 className="text-xl lg:text-2xl font-bold transition-colors duration-500" style={{ 
               color: currentPalette.text
             }}>
               Dashboard
@@ -316,16 +353,16 @@ export default function Home() {
 
           
           {/* Saved Fonts Section */}
-          <div className="space-y-4">
+          <div className="space-y-2 lg:space-y-4">
             <div className="flex items-center gap-2">
-              <h3 className="text-lg font-semibold transition-colors duration-500" style={{ color: currentPalette.text }}>Font Collection</h3>
+              <h3 className="text-base lg:text-lg font-semibold transition-colors duration-500" style={{ color: currentPalette.text }}>Font Collection</h3>
               <div className="flex-1 h-px transition-all duration-500" style={{ 
                 backgroundColor: `${currentPalette.accent}60`
               }}></div>
             </div>
             
             {savedFonts.length === 0 ? (
-              <div className="text-center py-8">
+              <div className="text-center py-4 lg:py-8">
                 <div className="w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center transition-colors duration-500" style={{ backgroundColor: `${currentPalette.secondary}80` }}>
                   <div 
                     className="w-8 h-8"
@@ -419,16 +456,16 @@ export default function Home() {
           </div>
 
           {/* Saved Palettes Section */}
-          <div className="space-y-4 mt-8">
+          <div className="space-y-2 lg:space-y-4 mt-4 lg:mt-8">
             <div className="flex items-center gap-2">
-              <h3 className="text-lg font-semibold transition-colors duration-500" style={{ color: currentPalette.text }}>Palette Collection</h3>
+              <h3 className="text-base lg:text-lg font-semibold transition-colors duration-500" style={{ color: currentPalette.text }}>Palette Collection</h3>
               <div className="flex-1 h-px transition-all duration-500" style={{ 
                 backgroundColor: `${currentPalette.accent}60`
               }}></div>
             </div>
             
             {savedPalettes.length === 0 ? (
-              <div className="text-center py-8">
+              <div className="text-center py-4 lg:py-8">
                 <div className="w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center transition-colors duration-500" style={{ backgroundColor: `${currentPalette.secondary}80` }}>
                   <div 
                     className="w-8 h-8"
@@ -523,11 +560,19 @@ export default function Home() {
       </div>
       
       {/* Main Content */}
-      <div className="flex-1 flex flex-col items-center justify-center relative p-4 transition-colors duration-500 h-screen overflow-hidden" style={{ backgroundColor: currentPalette.background }}>
-      <div className="flex flex-col items-center">
-        <div className="flex items-center justify-center min-h-[200px]">
+      <div 
+        className="flex-1 flex flex-col items-center justify-start lg:justify-center relative p-4 lg:p-8 transition-colors duration-500 h-full overflow-hidden" 
+        style={{ backgroundColor: currentPalette.background }}
+        onClick={() => {
+          if (isMobileDashboardOpen) {
+            setIsMobileDashboardOpen(false);
+          }
+        }}
+      >
+      <div className="flex flex-col items-center w-full max-w-4xl pt-8 lg:pt-0">
+        <div className="flex items-center justify-center min-h-[120px] lg:min-h-[200px]">
           <h1 
-            className={`text-9xl font-bold text-center break-words max-w-full transition-all duration-300 leading-none ${
+            className={`text-4xl sm:text-6xl md:text-7xl lg:text-9xl font-bold text-center break-words max-w-full transition-all duration-300 leading-none ${
               isAnimating ? 'opacity-60' : 'opacity-100'
             }`}
             style={{ 
@@ -546,7 +591,7 @@ export default function Home() {
           href={`https://fonts.google.com/specimen/${currentFont.replace(/\s+/g, '+')}`}
           target="_blank"
           rel="noopener noreferrer"
-          className="text-lg font-mono hover:scale-105 transition-all duration-200 cursor-pointer"
+          className="text-sm sm:text-base lg:text-lg font-mono hover:scale-105 transition-all duration-200 cursor-pointer text-center"
           style={{ 
             color: currentPalette.accent,
             marginTop: '-10px'
@@ -558,8 +603,8 @@ export default function Home() {
         </a>
         
         {/* Color palette display */}
-        <div className="mt-1 text-xs font-mono transition-colors duration-500" style={{ color: `${currentPalette.accent}CC` }}>
-          <div className="flex flex-wrap gap-2 justify-center">
+        <div className="mt-1 text-xs font-mono transition-colors duration-500 text-center" style={{ color: `${currentPalette.accent}CC` }}>
+          <div className="flex flex-wrap gap-1 sm:gap-2 justify-center text-xs sm:text-sm">
             <span>{currentPalette.primary}</span>
             <span>•</span>
             <span>{currentPalette.secondary}</span>
@@ -570,9 +615,9 @@ export default function Home() {
           </div>
         </div>
       </div>
-      <div className="absolute bottom-20 w-full flex flex-col items-center gap-4">
-        <div className="flex items-center gap-6">
-          <div className="relative">
+      <div className="mt-8 lg:absolute lg:bottom-20 w-full flex flex-col items-center gap-4 px-4">
+        <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6 w-full max-w-2xl">
+          <div className="relative w-full sm:w-auto">
             <input
               type="text"
               value={inputText}
@@ -580,25 +625,28 @@ export default function Home() {
               onFocus={() => setIsFocused(true)}
               onBlur={() => setIsFocused(false)}
               placeholder={isFocused || inputText ? "" : "Type something..."}
-              className="px-6 py-4 text-xl bg-transparent focus:outline-none w-96 text-center transition-colors duration-500 placeholder-opacity-60"
+              className="px-4 sm:px-6 py-3 sm:py-4 text-lg sm:text-xl bg-transparent focus:outline-none w-full sm:w-96 text-center transition-colors duration-500 placeholder-opacity-60"
               style={{ 
                 color: currentPalette.text
               }}
             />
             <div className="absolute bottom-0 left-0 right-0 h-0.5 transition-colors duration-500" style={{ backgroundColor: currentPalette.accent }}></div>
           </div>
-           <button
-            onClick={randomizeFont}
-            className="p-2 relative group"
-            aria-label="Randomize font"
-          >
+          
+          {/* Action buttons - responsive layout */}
+          <div className="flex items-center gap-2 sm:gap-4 flex-shrink-0">
+            <button
+              onClick={randomizeFont}
+              className="p-3 sm:p-2 relative group"
+              aria-label="Randomize font"
+            >
             <div className="absolute top-16 left-1/2 transform -translate-x-1/2 text-xs font-bold opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap" style={{ 
               color: currentPalette.text
             }}>
               Random Google Font
             </div>
             <div 
-              className="w-10 h-10 hover:scale-110 transition-all duration-500"
+              className="w-8 h-8 sm:w-10 sm:h-10 hover:scale-110 transition-all duration-500"
               style={{ 
                 backgroundColor: currentPalette.primary,
                 mask: `url(/pencil.svg) no-repeat center`,
@@ -608,20 +656,18 @@ export default function Home() {
                 opacity: 1
               }}
             />
-          </button>
-
-          <button
-            onClick={generateRandomPalette}
-            className="p-2 relative group"
-            aria-label="Paint"
-          >
+          </button>            <button
+              onClick={generateRandomPalette}
+              className="p-3 sm:p-2 relative group"
+              aria-label="Paint"
+            >
             <div className="absolute top-16 left-1/2 transform -translate-x-1/2 text-xs font-bold opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap" style={{ 
               color: currentPalette.text
             }}>
               Random Color Palette
             </div>
             <div 
-              className="w-10 h-10 hover:scale-110 transition-all duration-500"
+              className="w-8 h-8 sm:w-10 sm:h-10 hover:scale-110 transition-all duration-500"
               style={{ 
                 backgroundColor: currentPalette.primary,
                 mask: `url(/paint.svg) no-repeat center`,
@@ -635,7 +681,7 @@ export default function Home() {
 
           <button
             onClick={toggleSaveFont}
-            className="p-2 relative group"
+            className="p-3 sm:p-2 relative group"
             aria-label="Save font"
           >
             <div className="absolute top-16 left-1/2 transform -translate-x-1/2 text-xs font-bold opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap" style={{ 
@@ -644,7 +690,7 @@ export default function Home() {
               Save Font
             </div>
             <div 
-              className="w-10 h-10 hover:scale-110 transition-all duration-500"
+              className="w-8 h-8 sm:w-10 sm:h-10 hover:scale-110 transition-all duration-500"
               style={{ 
                 backgroundColor: currentPalette.primary,
                 mask: `url(/bookmark.svg) no-repeat center`,
@@ -658,7 +704,7 @@ export default function Home() {
 
           <button
             onClick={toggleSavePalette}
-            className="p-2 relative group"
+            className="p-3 sm:p-2 relative group"
             aria-label="Save palette"
           >
             <div className="absolute top-16 left-1/2 transform -translate-x-1/2 text-xs font-bold opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap" style={{ 
@@ -667,7 +713,7 @@ export default function Home() {
               Save Palette
             </div>
             <div 
-              className="w-10 h-10 hover:scale-110 transition-all duration-500"
+              className="w-8 h-8 sm:w-10 sm:h-10 hover:scale-110 transition-all duration-500"
               style={{ 
                 backgroundColor: currentPalette.primary,
                 mask: `url(/save-paint.svg) no-repeat center`,
@@ -678,12 +724,13 @@ export default function Home() {
               }}
             />
           </button>
+          </div>
         </div>
         
-        <div className="flex items-center gap-4">
+        <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-4 w-full max-w-4xl px-4">
           <button
             onClick={() => setSelectedCategory('All Fonts')}
-            className="px-3 py-2 text-sm transition-all duration-200 relative"
+            className="px-2 sm:px-3 py-2 text-xs sm:text-sm transition-all duration-200 relative"
             style={{ 
               color: selectedCategory === 'All Fonts' ? currentPalette.text : currentPalette.accent 
             }}
@@ -707,7 +754,7 @@ export default function Home() {
             <button
               key={category}
               onClick={() => setSelectedCategory(category)}
-              className="px-3 py-2 text-sm transition-all duration-200 relative"
+              className="px-2 sm:px-3 py-2 text-xs sm:text-sm transition-all duration-200 relative"
               style={{ 
                 color: selectedCategory === category ? currentPalette.text : currentPalette.accent 
               }}
@@ -730,12 +777,12 @@ export default function Home() {
           ))}
         </div>
         
-        <div className="flex items-center gap-4 mt-4">
+        <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-4 mt-4 w-full max-w-4xl px-4">
           {['Monochromatic', 'Complementary', 'Analogous', 'Triadic'].map(paletteType => (
             <button
               key={paletteType}
               onClick={() => setSelectedPaletteType(paletteType)}
-              className="px-3 py-2 text-sm transition-all duration-200 relative"
+              className="px-2 sm:px-3 py-2 text-xs sm:text-sm transition-all duration-200 relative"
               style={{ 
                 color: selectedPaletteType === paletteType ? currentPalette.text : currentPalette.accent 
               }}
