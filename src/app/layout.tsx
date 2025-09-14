@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { Analytics } from "@vercel/analytics/react";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -11,6 +12,12 @@ const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
 });
+
+// Add Covered By Your Grace font
+const coveredByYourGrace = {
+  variable: "--font-covered-by-your-grace",
+  className: "covered-by-your-grace"
+};
 
 export const metadata: Metadata = {
   title: "I'm Lazy - Font & Color Palette Generator | Design Tools",
@@ -104,6 +111,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         {children}
+        <Analytics />
       </body>
     </html>
   );
