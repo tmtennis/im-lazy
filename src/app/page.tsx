@@ -573,10 +573,10 @@ export default function Home() {
         <div className="flex h-full w-full relative">
           
           {/* Large Display Text - Center */}
-          <div className="flex-1 flex items-center justify-center">
-            <div className="text-center">
+          <div className="flex-1 flex items-center justify-center px-4">
+            <div className="text-center w-full">
               <h1 
-                className={`text-6xl sm:text-8xl md:text-9xl lg:text-[12rem] xl:text-[14rem] font-bold text-center break-words max-w-full transition-all duration-300 leading-none ${
+                className={`text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold text-center break-words max-w-full transition-all duration-300 leading-tight ${
                   isAnimating ? 'opacity-60' : 'opacity-100'
                 }`}
                 style={{ 
